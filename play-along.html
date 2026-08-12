@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify – Jetzt läuft</title>
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --bg: #121212;
+            --card: #181818;
+            --text: #ffffff;
+            --text-dim: #b3b3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .siteContent {
+            min-height: 100vh;
+            display: flex;
+            align-items: start;
+            justify-content: left;
+            margin-top: 20px;
+            margin-left: 25px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 32px;
+            width: 360px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            background: var(--spotify-green);
+            color: #000;
+            border: none;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            transition: ease-in-out 0.2s;
+        }
+
+            button:hover {
+                filter: brightness(1.08);
+            }
+
+        .now-playing {
+            display: none;
+        }
+
+            .now-playing.active {
+                display: block;
+            }
+
+        .track-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+
+            .track-row img {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+                object-fit: cover;
+                background: #333;
+            }
+
+        .track-name {
+            font-weight: 700;
+            font-size: 15px;
+            margin: 0 0 2px;
+        }
+
+        .track-artist {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .progress-track {
+            background: #404040;
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 11px;
+        }
+
+        .progress-fill {
+            background: var(--spotify-green);
+            height: 100%;
+            width: 0%;
+            transition: width 0.9s linear;
+        }
+
+        .time-row {
+            display: flex;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .track-id {
+            margin-top: 16px;
+            font-size: 11px;
+            color: var(--text-dim);
+            word-break: break-all;
+            border-top: 1px solid #2a2a2a;
+            padding-top: 12px;
+        }
+
+        .empty-state {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid #404040;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+            margin-top: 0px;
+            margin-right: 2px;
+            transition: ease-in-out 0.2s;
+        }
+
+            .logout-btn:hover {
+                color: var(--text);
+                border-color: var(--text-dim);
+            }
+
+        .playnowBar {
+            width: stretch;
+            height: 76px;
+            background-color: rgba(18, 18, 18, 0.9);
+            padding: 10px;
+            backdrop-filter: blur(100px);
+            border-bottom: solid rgba(220, 220, 220, 0.25) 1px;
+
+            -webkit-box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.4);
+            box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.4);
+        }
+
+        .flex-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: stretch;
+        }
+
+        .background-blur {
+            backdrop-filter: blur(80px);
+            background: rgba(18, 18, 18, 7.9);
+            background: linear-gradient(180deg, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 10%, rgba(18, 18, 18, 0.85) 20%, rgba(18, 18, 18, 0.95) 40%, rgba(18, 18, 18, 1) 75%);
+        }
+
+        .chordBox {
+            background-color: var(--card);
+            width: stretch;
+            margin-top: 10px;
+            height: fit-content;
+            border: solid rgba(220, 220, 220, 0.25) 1px;
+            border-radius: 12px;
+            padding: 10px 14px 10px 14px;
+            -webkit-box-shadow: 7px 7px 13px -3px rgba(0,0,0,0.45);
+            box-shadow: 7px 7px 13px -3px rgba(0,0,0,0.45);
+        }
+
+        .ChordBoxTitle {
+            width: stretch;
+            text-align: center;
+        }
+
+        .ChordBoxChorsText {
+            font-weight: 300;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blur">
+        <div id="player-view" class="now-playing">
+            <div class="playnowBar">
+                <div class="track-row">
+                    <img id="album-art" src="" alt="">
+                    <div class="flex-content">
+                        <div>
+                            <p class="track-name" id="track-name">–</p>
+                            <p class="track-artist" id="track-artist">–</p>
+                        </div>
+                        <button class="logout-btn" id="logout-btn">Abmelden</button>
+                    </div>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="siteContent">
+            <div id="login-view">
+                <div class="card">
+                    <h1><span class="dot"></span> Please sign in</h1>
+                    <p class="empty-state">You have to sign in with your Spotify account to use Play Along.</p>
+                    <button id="login-btn">Sign in with Spotify</button>
+                </div>
+            </div>
+
+            <div id="player-view">
+                <div class="chordBox">
+                    <div ChordBoxTitle>
+                        <b>Chords:</b>
+                    </div>
+                    
+                    <div class="ChordBoxChorsText">
+                        <b>G | Cadd9 | D | Am | C | Em</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ====== KONFIGURATION – ANPASSEN ====== */
+        const CLIENT_ID = "4f8f52747c01479c9f3e1db6ac56aa22";
+        const REDIRECT_URI = "http://127.0.0.1:3000/Desktop/play-along.html";
+        const SCOPES = "user-read-currently-playing user-read-playback-state";
+        /* ======================================= */
+
+        const loginView = document.getElementById("login-view");
+        const playerView = document.getElementById("player-view");
+
+        /* --- PKCE Helpers --- */
+        function generateRandomString(length) {
+            const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+                .map((x) => possible[x % possible.length]).join("");
+        }
+
+        async function sha256(plain) {
+            const data = new TextEncoder().encode(plain);
+            return crypto.subtle.digest("SHA-256", data);
+        }
+
+        function base64encode(input) {
+            return btoa(String.fromCharCode(...new Uint8Array(input)))
+                .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+        }
+
+        /* --- Login starten --- */
+        async function login() {
+            const codeVerifier = generateRandomString(64);
+            const hashed = await sha256(codeVerifier);
+            const codeChallenge = base64encode(hashed);
+
+            localStorage.setItem("sp_code_verifier", codeVerifier);
+
+            const params = new URLSearchParams({
+                client_id: CLIENT_ID,
+                response_type: "code",
+                redirect_uri: REDIRECT_URI,
+                scope: SCOPES,
+                code_challenge_method: "S256",
+                code_challenge: codeChallenge,
+            });
+
+            window.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+        }
+
+        /* --- Code gegen Access Token tauschen --- */
+        async function exchangeCodeForToken(code) {
+            const codeVerifier = localStorage.getItem("sp_code_verifier");
+
+            const params = new URLSearchParams({
+                client_id: CLIENT_ID,
+                grant_type: "authorization_code",
+                code,
+                redirect_uri: REDIRECT_URI,
+                code_verifier: codeVerifier,
+            });
+
+            const res = await fetch("https://accounts.spotify.com/api/token", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: params,
+            });
+
+            if (!res.ok) throw new Error("Token-Austausch fehlgeschlagen");
+
+            const data = await res.json();
+            saveTokens(data);
+            return data.access_token;
+        }
+
+        /* --- Token erneuern --- */
+        async function refreshAccessToken() {
+            const refreshToken = localStorage.getItem("sp_refresh_token");
+            if (!refreshToken) return null;
+
+            const params = new URLSearchParams({
+                client_id: CLIENT_ID,
+                grant_type: "refresh_token",
+                refresh_token: refreshToken,
+            });
+
+            const res = await fetch("https://accounts.spotify.com/api/token", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: params,
+            });
+
+            if (!res.ok) return null;
+            const data = await res.json();
+            saveTokens(data);
+            return data.access_token;
+        }
+
+        function saveTokens(data) {
+            localStorage.setItem("sp_access_token", data.access_token);
+            if (data.refresh_token) localStorage.setItem("sp_refresh_token", data.refresh_token);
+            localStorage.setItem("sp_expires_at", Date.now() + data.expires_in * 1000);
+        }
+
+        async function getValidAccessToken() {
+            const expiresAt = Number(localStorage.getItem("sp_expires_at") || 0);
+            if (Date.now() > expiresAt - 10000) {
+                return await refreshAccessToken();
+            }
+            return localStorage.getItem("sp_access_token");
+        }
+
+        /* --- Currently Playing abrufen --- */
+        async function getCurrentlyPlaying() {
+            const token = await getValidAccessToken();
+            if (!token) return null;
+
+            const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.status === 204 || res.status === 202) return { empty: true };
+            if (!res.ok) return null;
+
+            const data = await res.json();
+            if (!data || !data.item) return { empty: true };
+
+            return {
+                songId: data.item.id,
+                name: data.item.name,
+                artist: data.item.artists.map((a) => a.name).join(", "),
+                albumImage: data.item.album.images[0]?.url || "",
+                progressMs: data.progress_ms || 0,
+                durationMs: data.item.duration_ms,
+                isPlaying: data.is_playing,
+            };
+        }
+
+        /* --- Anzeige / Fortschritt --- */
+        function formatTime(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const min = Math.floor(totalSec / 60);
+            const sec = String(totalSec % 60).padStart(2, "0");
+            return `${min}:${sec}`;
+        }
+
+        let localProgress = 0;
+        let durationMs = 0;
+        let tickTimer = null;
+
+        function renderTrack(track) {
+            const body = document.body;
+
+            document.getElementById("track-name").textContent = track.name;
+            document.getElementById("track-artist").textContent = track.artist;
+            document.getElementById("album-art").src = track.albumImage;
+            body.style.backgroundImage = `url('${track.albumImage}')`;
+            //document.getElementById("track-id-display").textContent = `Spotify Track ID: ${track.songId}`;
+            //document.getElementById("time-total").textContent = formatTime(track.durationMs);
+
+            localProgress = track.progressMs;
+            durationMs = track.durationMs;
+            updateProgressBar();
+
+            clearInterval(tickTimer);
+            if (track.isPlaying) {
+                tickTimer = setInterval(() => {
+                    localProgress = Math.min(localProgress + 1000, durationMs);
+                    updateProgressBar();
+                }, 1000);
+            }
+        }
+
+        function updateProgressBar() {
+            const percent = durationMs ? (localProgress / durationMs) * 100 : 0;
+            document.getElementById("progress-fill").style.width = `${percent}%`;
+            document.getElementById("time-current").textContent = formatTime(localProgress);
+        }
+
+        function showEmptyState() {
+            clearInterval(tickTimer);
+            document.getElementById("track-name").textContent = "Gerade läuft nichts";
+            document.getElementById("track-artist").textContent = "";
+            document.getElementById("track-id-display").textContent = "";
+            document.getElementById("progress-fill").style.width = "0%";
+        }
+
+        let pollTimer = null;
+
+        async function pollNowPlaying() {
+            const track = await getCurrentlyPlaying();
+            if (!track) return; // Token-Problem etc.
+            if (track.empty) {
+                showEmptyState();
+            } else {
+                renderTrack(track);
+            }
+        }
+
+        /* --- Logout --- */
+        function logout() {
+            clearInterval(tickTimer);
+            clearInterval(pollTimer);
+            localStorage.removeItem("sp_access_token");
+            localStorage.removeItem("sp_refresh_token");
+            localStorage.removeItem("sp_expires_at");
+            localStorage.removeItem("sp_code_verifier");
+
+            playerView.classList.remove("active");
+            loginView.style.display = "block";
+
+            // Anzeige zurücksetzen
+            document.getElementById("track-name").textContent = "–";
+            document.getElementById("track-artist").textContent = "–";
+            document.getElementById("album-art").src = "";
+            document.getElementById("track-id-display").textContent = "";
+            document.getElementById("progress-fill").style.width = "0%";
+            document.getElementById("time-current").textContent = "0:00";
+            document.getElementById("time-total").textContent = "0:00";
+        }
+
+        /* --- Init --- */
+        async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get("code");
+
+            if (code) {
+                // Callback von Spotify: Code gegen Token tauschen
+                await exchangeCodeForToken(code);
+                window.history.replaceState({}, document.title, REDIRECT_URI);
+            }
+
+            const token = localStorage.getItem("sp_access_token");
+            if (token) {
+                loginView.style.display = "none";
+                playerView.classList.add("active");
+                pollNowPlaying();
+                pollTimer = setInterval(pollNowPlaying, 3000); // alle 3s neu synchronisieren
+            }
+        }
+
+        document.getElementById("login-btn").addEventListener("click", login);
+        document.getElementById("logout-btn").addEventListener("click", logout);
+        init();
+    </script>
+
+</body>
+</html>
