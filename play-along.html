@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Spotify – Jetzt läuft</title>
+    <title>Spotify â€“ Jetzt lÃ¤uft</title>
     <style>
         :root {
             --spotify-green: #1DB954;
@@ -215,8 +215,8 @@
                     <img id="album-art" src="" alt="">
                     <div class="flex-content">
                         <div>
-                            <p class="track-name" id="track-name">–</p>
-                            <p class="track-artist" id="track-artist">–</p>
+                            <p class="track-name" id="track-name">â€“</p>
+                            <p class="track-artist" id="track-artist">â€“</p>
                         </div>
                         <button class="logout-btn" id="logout-btn">Abmelden</button>
                     </div>
@@ -252,9 +252,9 @@
     </div>
 
     <script>
-        /* ====== KONFIGURATION – ANPASSEN ====== */
+        /* ====== KONFIGURATION â€“ ANPASSEN ====== */
         const CLIENT_ID = "4f8f52747c01479c9f3e1db6ac56aa22";
-        const REDIRECT_URI = "http://127.0.0.1:3000/Desktop/play-along.html";
+        const REDIRECT_URI = "https://jomape09.github.io/Play-Along/";
         const SCOPES = "user-read-currently-playing user-read-playback-state";
         /* ======================================= */
 
@@ -429,7 +429,7 @@
 
         function showEmptyState() {
             clearInterval(tickTimer);
-            document.getElementById("track-name").textContent = "Gerade läuft nichts";
+            document.getElementById("track-name").textContent = "Gerade lÃ¤uft nichts";
             document.getElementById("track-artist").textContent = "";
             document.getElementById("track-id-display").textContent = "";
             document.getElementById("progress-fill").style.width = "0%";
@@ -459,9 +459,9 @@
             playerView.classList.remove("active");
             loginView.style.display = "block";
 
-            // Anzeige zurücksetzen
-            document.getElementById("track-name").textContent = "–";
-            document.getElementById("track-artist").textContent = "–";
+            // Anzeige zurÃ¼cksetzen
+            document.getElementById("track-name").textContent = "â€“";
+            document.getElementById("track-artist").textContent = "â€“";
             document.getElementById("album-art").src = "";
             document.getElementById("track-id-display").textContent = "";
             document.getElementById("progress-fill").style.width = "0%";
