@@ -218,7 +218,7 @@
                             <p class="track-name" id="track-name">–</p>
                             <p class="track-artist" id="track-artist">–</p>
                         </div>
-                        <button class="logout-btn" id="logout-btn">Abmelden</button>
+                        <button class="logout-btn" id="logout-btn">Sign out</button>
                     </div>
                 </div>
 
@@ -429,7 +429,7 @@
 
         function showEmptyState() {
             clearInterval(tickTimer);
-            document.getElementById("track-name").textContent = "Gerade läuft nichts";
+            document.getElementById("track-name").textContent = "Nothing is running right now...";
             document.getElementById("track-artist").textContent = "";
             document.getElementById("track-id-display").textContent = "";
             document.getElementById("progress-fill").style.width = "0%";
