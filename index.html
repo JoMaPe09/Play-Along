@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Spotify – Jetzt läuft</title>
+    <title>Play Along</title>
     <style>
         :root {
             --spotify-green: #1DB954;
@@ -204,6 +204,47 @@
             font-weight: 300;
             color: var(--text-dim);
         }
+
+        .lyrics-component {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 40px 20px;
+            border-radius: 12px;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+            text-align: center;
+            mask-image: linear-gradient(to bottom, transparent 0%, white 20%, white 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 20%, white 80%, transparent 100%);
+        }
+
+        .lyric-line {
+            padding: 12px 0;
+            font-size: 1.2rem;
+            color: #727272;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.95);
+            opacity: 0.6;
+        }
+
+            .lyric-line.active {
+                color: #ffffff;
+                font-size: 1.7rem;
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+        .lyrics-placeholder {
+            color: #727272;
+            padding-top: 150px;
+            font-size: 1.1rem;
+        }
+
+        .lyrics-component::-webkit-scrollbar {
+            width: 0px;
+        }
     </style>
 </head>
 
@@ -215,8 +256,8 @@
                     <img id="album-art" src="" alt="">
                     <div class="flex-content">
                         <div>
-                            <p class="track-name" id="track-name">–</p>
-                            <p class="track-artist" id="track-artist">–</p>
+                            <p class="track-name" id="track-name">�</p>
+                            <p class="track-artist" id="track-artist">�</p>
                         </div>
                         <button class="logout-btn" id="logout-btn">Sign out</button>
                     </div>
@@ -242,17 +283,21 @@
                     <div ChordBoxTitle>
                         <b>Chords:</b>
                     </div>
-                    
+
                     <div class="ChordBoxChorsText">
                         <b>G | Cadd9 | D | Am | C | Em</b>
                     </div>
+                </div>
+
+                <div class="lyrics-component" id="lyricsBox">
+                    <div class="lyrics-placeholder">Lade einen Song, um die Songtexte anzuzeigen...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        /* ====== KONFIGURATION – ANPASSEN ====== */
+        /* ====== KONFIGURATION � ANPASSEN ====== */
         const CLIENT_ID = "4f8f52747c01479c9f3e1db6ac56aa22";
         const REDIRECT_URI = "https://jomape09.github.io/Play-Along/";
         const SCOPES = "user-read-currently-playing user-read-playback-state";
@@ -405,12 +450,14 @@
             document.getElementById("track-artist").textContent = track.artist;
             document.getElementById("album-art").src = track.albumImage;
             body.style.backgroundImage = `url('${track.albumImage}')`;
+            loadLyricsBySpotifyId(track.songId);
             //document.getElementById("track-id-display").textContent = `Spotify Track ID: ${track.songId}`;
             //document.getElementById("time-total").textContent = formatTime(track.durationMs);
 
             localProgress = track.progressMs;
             durationMs = track.durationMs;
             updateProgressBar();
+            syncLyricsToTime(track.durationMs / 1000);
 
             clearInterval(tickTimer);
             if (track.isPlaying) {
@@ -459,9 +506,9 @@
             playerView.classList.remove("active");
             loginView.style.display = "block";
 
-            // Anzeige zurücksetzen
-            document.getElementById("track-name").textContent = "–";
-            document.getElementById("track-artist").textContent = "–";
+            // Anzeige zur�cksetzen
+            document.getElementById("track-name").textContent = "�";
+            document.getElementById("track-artist").textContent = "�";
             document.getElementById("album-art").src = "";
             document.getElementById("track-id-display").textContent = "";
             document.getElementById("progress-fill").style.width = "0%";
@@ -492,6 +539,124 @@
         document.getElementById("login-btn").addEventListener("click", login);
         document.getElementById("logout-btn").addEventListener("click", logout);
         init();
+    </script>
+
+    <script>
+        let parsedLyricLines = [];
+
+        async function loadLyricsBySpotifyId(spotifyTrackId) {
+            const lyricsBox = document.getElementById('lyricsBox');
+            if (!spotifyTrackId) return;
+
+            // Zurücksetzen und Ladezustand anzeigen
+            parsedLyricLines = [];
+            lyricsBox.innerHTML = '<div class="lyrics-placeholder">Lade Songtext...</div>';
+
+            // LRCLIB verlangt oft eine Identifikation im Header, um "Failed to fetch" zu verhindern
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    'X-User-Agent': 'SyncedLyricsWebComponent/1.0 (Contact: mail@example.com)'
+                }
+            };
+
+            try {
+                // API-Abfrage starten
+                const response = await fetch(`https://lrclib.net{spotifyTrackId}`, requestOptions);
+
+                if (response.status === 404) {
+                    throw new Error('Für diese Spotify-ID wurden keine Lyrics in der Datenbank gefunden.');
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Server-Fehler: Status ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.syncedLyrics) {
+                    // LRC-Format parsen
+                    parsedLyricLines = parseLrcFormat(data.syncedLyrics);
+
+                    // HTML-Elemente generieren
+                    lyricsBox.innerHTML = '';
+                    parsedLyricLines.forEach((line, index) => {
+                        const lineDiv = document.createElement('div');
+                        lineDiv.className = 'lyric-line';
+                        lineDiv.id = `lyric-line-${index}`;
+                        lineDiv.innerText = line.text || "🎵";
+                        lyricsBox.appendChild(lineDiv);
+                    });
+                } else {
+                    lyricsBox.innerHTML = '<div class="lyrics-placeholder">Für diesen Song existieren nur un-synchronisierte Texte.</div>';
+                }
+            } catch (error) {
+                // Detaillierte Fehlerausgabe für dich im Browser
+                console.error("API Fehler:", error);
+
+                if (error.message.includes('Failed to fetch')) {
+                    lyricsBox.innerHTML = `
+                <div class="lyrics-placeholder" style="color: #ff9900; padding: 20px;">
+                    <strong>Netzwerk-Blockade (Failed to fetch)</strong><br><br>
+                    <small>Falls du die HTML-Datei lokal per Doppelklick geöffnet hast, blockiert dein Browser den Request.</small><br><br>
+                    <span style="font-size:0.9rem; color:#aaa;">Lösung: Nutze eine Live-Server-Extension (z.B. in VS Code) oder lade die Datei auf einen Server hoch.</span>
+                </div>`;
+                } else {
+                    lyricsBox.innerHTML = `<div class="lyrics-placeholder" style="color: #ff4444;">${error.message}</div>`;
+                }
+            }
+        }
+
+        function syncLyricsToTime(currentSeconds) {
+            if (parsedLyricLines.length === 0) return;
+
+            let activeIndex = -1;
+
+            for (let i = 0; i < parsedLyricLines.length; i++) {
+                if (currentSeconds >= parsedLyricLines[i].time) {
+                    activeIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            const allLines = document.querySelectorAll('.lyric-line');
+            allLines.forEach(line => line.classList.remove('active'));
+
+            if (activeIndex !== -1) {
+                const activeLine = document.getElementById(`lyric-line-${activeIndex}`);
+                if (activeLine) {
+                    activeLine.classList.add('active');
+
+                    const lyricsBox = document.getElementById('lyricsBox');
+                    lyricsBox.scrollTop = activeLine.offsetTop - lyricsBox.offsetTop - (lyricsBox.clientHeight / 2) + (activeLine.clientHeight / 2);
+                }
+            }
+        }
+
+        // Interne Hilfsfunktion zum Parsen der Zeitstempel
+        function parseLrcFormat(lrcText) {
+            const lines = lrcText.split('\n');
+            const timeRegex = /\[(\d+):(\d+)\.(\d+)\]/;
+            const result = [];
+
+            lines.forEach(line => {
+                const match = timeRegex.exec(line);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseInt(match[2]);
+                    const milliseconds = parseInt(match[3]);
+
+                    const totalSeconds = (minutes * 60) + seconds + (milliseconds / 100);
+                    const text = line.replace(timeRegex, '').trim();
+
+                    if (text || result.length > 0) {
+                        result.push({ time: totalSeconds, text: text });
+                    }
+                }
+            });
+            return result;
+        }
     </script>
 
 </body>
