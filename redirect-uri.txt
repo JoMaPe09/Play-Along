@@ -1,1 +1,1 @@
-http://127.0.0.1:3000/desktop/play-along-website/play-along.html
+https://jomape09.github.io/Play-Along/
