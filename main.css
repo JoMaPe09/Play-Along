@@ -1,0 +1,311 @@
+:root {
+    --spotify-green: #1DB954;
+    --bg: #121212;
+    --card: #181818;
+    --text: #ffffff;
+    --text-dim: #b3b3b3;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+    body::-webkit-scrollbar {
+        width: 0px;
+    }
+
+.siteContent {
+    height: calc(100vh - 76px);
+    display: flex;
+    align-items: start;
+    justify-content: left;
+    margin-top: 0;
+    margin-left: 25px;
+    margin-right: 25px;
+    padding-top: 20px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 32px;
+    width: 360px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+h1 {
+    font-size: 18px;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+button {
+    background: var(--spotify-green);
+    color: #000;
+    border: none;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    transition: ease-in-out 0.2s;
+}
+
+    button:hover {
+        filter: brightness(1.08);
+    }
+
+.now-playing {
+    display: none;
+}
+
+    .now-playing.active {
+        display: block;
+    }
+
+.track-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0px;
+}
+
+    .track-row img {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #333;
+    }
+
+.track-name {
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-artist {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.progress-track {
+    background: #404040;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 11px;
+}
+
+.progress-fill {
+    background: var(--spotify-green);
+    height: 100%;
+    width: 0%;
+    transition: width 0.9s linear;
+}
+
+.time-row {
+    display: flex;
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.track-id {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+    word-break: break-all;
+    border-top: 1px solid #2a2a2a;
+    padding-top: 12px;
+}
+
+.empty-state {
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.logout-btn {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid #404040;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    width: auto;
+    margin-top: 0px;
+    margin-right: 2px;
+    transition: ease-in-out 0.2s;
+}
+
+    .logout-btn:hover {
+        color: var(--text);
+        border-color: var(--text-dim);
+    }
+
+.playnowBar {
+    width: stretch;
+    height: 76px;
+    background-color: rgba(18, 18, 18, 0.9);
+    padding: 10px 10px 0px 10px;
+    backdrop-filter: blur(100px);
+    border-bottom: solid rgba(220, 220, 220, 0.25) 1px;
+    -webkit-box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.4);
+    box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.4);
+}
+
+.flex-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: stretch;
+}
+
+.background-blur {
+    height: 100%;
+    backdrop-filter: blur(80px);
+    background: rgba(18, 18, 18, 7.9);
+    background: linear-gradient(180deg, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 10%, rgba(18, 18, 18, 0.85) 20%, rgba(18, 18, 18, 0.95) 40%, rgba(18, 18, 18, 1) 75%);
+}
+
+.chordBox {
+    background-color: var(--card);
+    width: fit-content;
+    margin-top: 10px;
+    height: fit-content;
+    border: solid rgba(220, 220, 220, 0.25) 1px;
+    border-radius: 12px;
+    padding: 10px 14px 10px 14px;
+    -webkit-box-shadow: 7px 7px 13px -3px rgba(0,0,0,0.45);
+    box-shadow: 7px 7px 13px -3px rgba(0,0,0,0.45);
+}
+
+.ChordBoxTitle {
+    width: stretch;
+    text-align: center;
+}
+
+.ChordBoxChorsText {
+    font-weight: 300;
+    color: var(--text-dim);
+}
+
+.lyrics-component {
+    width: stretch;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 20px 50px 240px 0px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    transition: 1s;
+    text-align: left;
+    mask-image: linear-gradient(to bottom, transparent 0%, white 20%, white 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 20%, white 80%, transparent 100%);
+}
+
+.lyric-line {
+    padding-top: 16px;
+    text-align: left;
+    font-size: 20px;
+    color: #727272;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    transform: scale(0.95);
+    opacity: 0.6;
+    margin: 0px;
+}
+
+    .lyric-line.active {
+        color: #ffffff;
+        font-size: 26px;
+        opacity: 1;
+    }
+
+.lyrics-placeholder {
+    color: #727272;
+    padding-top: 150px;
+    font-size: 1.1rem;
+}
+
+.lyrics-component::-webkit-scrollbar {
+    width: 0px;
+}
+
+@media (max-width: 600px) {
+
+    .siteContent {
+        height: calc(100vh - 100px);
+    }
+
+    .track-row img {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+    }
+
+    .track-name {
+        font-size: 22px;
+        max-width: calc(100vw - 190px);
+    }
+
+    .track-artist {
+        font-size: 16px;
+    }
+
+    .progress-track {
+        height: 6px;
+        border-radius: 3px;
+        margin-top: 12px;
+    }
+
+    .playnowBar {
+        height: 100px;
+    }
+
+    .chordBox {
+        width: 100%;
+    }
+
+    .lyrics-component {
+        height: contain;
+        width: calc(100vw - 50px);
+    }
+
+    .lyric-line {
+        padding-top: 16px;
+        padding-right: 70px;
+        font-size: 22px;
+    }
+
+        .lyric-line.active {
+            font-size: 28px;
+            padding-right: 0px;
+        }
+
+    .lyrics-placeholder {
+        padding-top: 150px;
+        font-size: 22px;
+    }
+}
