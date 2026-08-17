@@ -260,28 +260,29 @@ button {
     }
 
     .track-row img {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         border-radius: 10px;
     }
 
     .track-name {
         font-size: 22px;
-        max-width: calc(100vw - 190px);
+        max-width: calc(100vw - 180px);
     }
 
     .track-artist {
         font-size: 16px;
+        max-width: calc(100vw - 180px);
     }
 
     .progress-track {
-        height: 6px;
-        border-radius: 3px;
+        height: 5px;
+        border-radius: 2.5px;
         margin-top: 12px;
     }
 
     .playnowBar {
-        height: 100px;
+        height: 95px;
     }
 
     .chordBox {
