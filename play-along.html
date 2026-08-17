@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Play Along</title>
+
+    <link href="main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="background-blur">
+        <div id="player-view" class="now-playing">
+            <div class="playnowBar">
+                <div class="track-row">
+                    <img id="album-art" src="" alt="">
+                    <div class="flex-content">
+                        <div>
+                            <p class="track-name" id="track-name">�</p>
+                            <p class="track-artist" id="track-artist">�</p>
+                        </div>
+                        <button class="logout-btn" id="logout-btn">Sign out</button>
+                    </div>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="siteContent">
+            <div id="login-view">
+                <div class="card">
+                    <h1>Please sign in</h1>
+                    <p class="empty-state">You have to sign in with your Spotify account to use Play Along.</p>
+                    <button id="login-btn">Sign in with Spotify</button>
+                </div>
+            </div>
+
+            <div id="player-view">
+                <div class="chordBox">
+                    <div ChordBoxTitle>
+                        <b>Chords:</b>
+                    </div>
+
+                    <div class="ChordBoxChorsText">
+                        <b>No chords available yet...</b>
+                    </div>
+                </div>
+
+                <div class="lyrics-component" id="lyricsBox">
+                    <div class="lyrics-placeholder">Play a song to see the lyrics and chords...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="handle-spotify.js"></script>
+    <script src="handle-lyrics.js"></script>
+</body>
+</html>
