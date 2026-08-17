@@ -1,12 +1,6 @@
-﻿const CLIENT_ID = "4f8f52747c01479c9f3e1db6ac56aa22";
+const CLIENT_ID = "4f8f52747c01479c9f3e1db6ac56aa22";
 const SCOPES = "user-read-currently-playing user-read-playback-state";
-
-async function loadVar() {
-    const response = await fetch("redirect-uri.txt");
-    const REDIRECT_URI = await response.text();
-}
-
-loadVar();
+const REDIRECT_URI = "https://jomape09.github.io/Play-Along/";
 
 const loginView = document.getElementById("login-view");
 const playerView = document.getElementById("player-view");
@@ -183,7 +177,6 @@ function showEmptyState() {
     clearInterval(tickTimer);
     document.getElementById("track-name").textContent = "Nothing is running right now...";
     document.getElementById("track-artist").textContent = "";
-    document.getElementById("track-id-display").textContent = "";
     document.getElementById("progress-fill").style.width = "0%";
 }
 
